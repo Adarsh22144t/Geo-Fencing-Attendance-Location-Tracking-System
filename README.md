@@ -58,8 +58,11 @@ This project fulfills all core requirements of the given problem statement:
 | Map UI         | Leaflet.js + OpenStreetMap       |
 
 ---
+<img width="1912" height="857" alt="image" src="https://github.com/user-attachments/assets/2bb21a49-6bfc-4869-8e95-1ae15610255d" />
+<img width="1798" height="887" alt="image" src="https://github.com/user-attachments/assets/487c5be1-6051-4a72-9550-9a5c1fecbaf3" />
+<img width="1793" height="676" alt="image" src="https://github.com/user-attachments/assets/5301c080-abac-4272-b305-09365ef6328b" />
 
-## 🖼️ Demo UI Preview (Add Screenshots Here)
+
 
 | Employee Page                      | Admin Dashboard                          |
 |-----------------------------------|-------------------------------------------|
