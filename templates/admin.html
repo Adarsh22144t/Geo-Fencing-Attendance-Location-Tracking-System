@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin – Geo-Fencing Attendance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <style>
+        #map {
+            height: 400px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h2 class="mb-3">📊 Admin Dashboard – Geo-Fencing Attendance</h2>
+
+    <div class="card mb-4 p-3 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Live Map</h5>
+            <a href="/download-logs" class="btn btn-sm btn-outline-secondary">Download Logs (CSV)</a>
+        </div>
+        <p class="text-muted mb-2">Blue circle = office geo-fence. Red markers = employee check-ins.</p>
+        <div id="map"></div>
+    </div>
+
+    <div class="card p-3 shadow-sm">
+        <h5>Recent Attendance Logs</h5>
+        <div class="table-responsive mt-3">
+            <table class="table table-striped table-sm">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Emp ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Distance (m)</th>
+                    <th>Lat</th>
+                    <th>Lng</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for r in records %}
+                    <tr>
+                        <td>{{ r.id }}</td>
+                        <td>{{ r.emp_id }}</td>
+                        <td>{{ r.emp_name }}</td>
+                        <td>{{ r.status }}</td>
+                        <td>{{ "%.1f"|format(r.distance_m) }}</td>
+                        <td>{{ "%.5f"|format(r.lat) }}</td>
+                        <td>{{ "%.5f"|format(r.lng) }}</td>
+                        <td>{{ r.created_at }}</td>
+                    </tr>
+                {% endfor %}
+                {% if records|length == 0 %}
+                    <tr><td colspan="8" class="text-center text-muted">No records yet.</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+<script>
+    const officeLat = {{ office_lat }};
+    const officeLng = {{ office_lng }};
+    const radiusM = {{ radius_m }};
+    const records = {{ records | tojson }};
+
+    const map = L.map('map').setView([officeLat, officeLng], 17);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    L.marker([officeLat, officeLng]).addTo(map)
+        .bindPopup("Office Location")
+        .openPopup();
+
+    L.circle([officeLat, officeLng], {
+        radius: radiusM,
+        color: 'blue',
+        fillColor: '#7cb5ec',
+        fillOpacity: 0.2
+    }).addTo(map);
+
+    records.forEach(r => {
+        L.marker([r.lat, r.lng], {title: r.emp_name}).addTo(map)
+          .bindPopup(
+              `<b>${r.emp_name} (${r.emp_id})</b><br>Status: ${r.status}<br>Distance: ${r.distance_m.toFixed(1)} m<br>Time: ${r.created_at}`
+          );
+    });
+</script>
+</body>
+</html>
