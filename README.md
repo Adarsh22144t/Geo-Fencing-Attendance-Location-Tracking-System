@@ -1,91 +1,133 @@
 # Geo-Fencing Attendance & Location Tracking System
 
-A web-based attendance system that uses **geo-fencing** to verify whether a user is within an authorized area (office/campus) before marking attendance. It includes:
-
-- Employee-facing **check-in page**
-- Admin-only **dashboard with map**, configurable **office location & radius**
-- **CSV export** of attendance logs (with automatic clearing after download)
+A smart attendance system based on **Geo-Fencing**, designed to validate employee presence based on GPS coordinates before allowing attendance marking. This project provides a **secure, location-aware, web-based attendance solution** for offices, campuses, and field workers.
 
 ---
 
-## 🔍 Problem Statement Mapping (Cerevyn PS-9)
+## 🎯 Problem Statement (Cerevyn Solutions — PS-9)
 
-**Cerevyn Geo-Fencing Attendance & Location Tracking System**
+**“Geo-Fencing Attendance & Location Tracking System”**
 
-This project implements:
+This project fulfills all core requirements of the given problem statement:
 
-- Capture user location via mobile/website  
-- Compare with predefined geo-fence radius  
-- Mark attendance only if user is inside boundary  
-- Track movement history via logged coordinates and timestamps  
-- Admin dashboard for location logs and configuration  
-
----
-
-## ✨ Features
-
-### 👤 Employee Features
-
-- Web page to:
-  - Enter **Employee ID** and **Name**
-  - Click **“Mark Attendance”**
-- Uses browser **Geolocation API** to capture live latitude & longitude
-- Checks if user is **inside defined geo-fence**
-- Shows clear result:
-  - ✅ INSIDE GEOFENCE (Present)
-  - ❌ OUTSIDE GEOFENCE
-- Displays **live location coordinates** on the page
+- Capture live user location via browser/mobile  
+- Validate if the user is inside a defined geofence radius  
+- Record attendance logs with timestamp, location, and status  
+- Admin dashboard with map visualization  
+- Auto log download and clean-up  
+- Flexible location management by admin  
 
 ---
 
-### 🛡 Admin Features
+## 📌 Key Features
 
-- **Admin login** (username/password)
-- **Admin Dashboard**:
-  - View all recent attendance records in a table:
-    - Employee ID
-    - Name
-    - Status (Present / Outside Geofence)
-    - Distance from office (meters)
-    - Latitude & Longitude
-    - Timestamp
-  - **Interactive map** (Leaflet + OpenStreetMap):
-    - Office location marker
-    - Blue circle showing geofence radius
-    - Check-in markers for employees
+### 👨‍💼 Employee Portal
+- Simple UI to enter Employee ID and Name  
+- Captures **live location via browser**  
+- Marks attendance only if within geofence radius  
+- Clear result shown:  
+  - `✔ INSIDE GEOFENCE` (Present)  
+  - `❌ OUTSIDE GEOFENCE` (Not allowed)  
+- Displays **live GPS coordinates**  
+- Fully web-based — no app required  
 
-- **Configurable office location and radius**:
-  - Update **office latitude**, **longitude**, and **radius (meters)** directly from admin page
-  - Changes are stored in the database and immediately used in geofence checks
+---
 
-- **CSV export with auto-clear logs**:
-  - Button: **“Download & Clear Logs (CSV)”**
-  - Downloads all current attendance logs as a CSV file
-  - Automatically **deletes all records** from `attendance` table after export
-  - Next download will contain only **new** records
+### 🔐 Admin Portal
+
+| Feature                    | Description                                      |
+|---------------------------|--------------------------------------------------|
+| Secure Login              | Username + password (default: admin/admin123)    |
+| Dashboard                 | View logs, map, and configuration                |
+| Live Map                  | Office location + geofence + check-ins           |
+| Update Location           | Edit office lat/lng + radius via UI              |
+| CSV Export                | Download and auto-clear attendance logs          |
+| Clear Logs Automatically  | Logs wiped from DB after export                  |
+| Session-secured           | Admin session persists during use                |
 
 ---
 
 ## 🧱 Tech Stack
 
-- **Backend:** Python, Flask
-- **Frontend:** HTML, Bootstrap, JavaScript
-- **Database:** SQLite
-- **Maps:** Leaflet.js + OpenStreetMap
-- **Location:** Browser Geolocation API (`navigator.geolocation`)
+| Layer          | Tech Used                        |
+|----------------|----------------------------------|
+| Backend        | Python + Flask                   |
+| Frontend       | HTML, Bootstrap, JavaScript      |
+| Database       | SQLite                           |
+| Geolocation    | `navigator.geolocation` (browser) |
+| Map UI         | Leaflet.js + OpenStreetMap       |
 
 ---
 
-## 📁 Project Structure
+## 🖼️ Demo UI Preview (Add Screenshots Here)
 
-```text
+| Employee Page                      | Admin Dashboard                          |
+|-----------------------------------|-------------------------------------------|
+| Live location + attendance form   | Map + logs + location update + CSV export |
+
+> 🚀 Add screenshots or GIFs here to make your README visually appealing on GitHub.
+
+---
+
+## 📥 Installation Guide
+
+### 🔧 Prerequisites
+- Python 3.8+  
+- pip  
+- Git (optional)  
+- Virtual environment tool (recommended)
+
+---
+
+## 🧪 Usage Instructions
+
+### 👤 Employee
+
+- Open: `http://127.0.0.1:5000`
+- Enter: Employee ID and Name
+- Allow browser to access location
+- Click “Mark Attendance”
+- You will see:
+  - Live GPS location
+  - Attendance status: Present or Outside Geofence
+  - Distance from office location
+
+---
+
+### 🔸 Admin
+
+- Go to: `http://127.0.0.1:5000/admin/login`
+- Login using:
+  - Username: `admin`
+  - Password: `admin123`
+- Dashboard includes:
+  - Map with geofence
+  - Live check-ins
+  - Editable office location & radius
+  - Export logs as CSV and clear logs automatically
+
+---
+
+## ⚙️ Configuration
+
+### Default Geofence Settings (in `app.py`)
+```python
+DEFAULT_OFFICE_LAT = 18.573441
+DEFAULT_OFFICE_LNG = 83.361742
+DEFAULT_RADIUS_M = 200  # meters
+
+#Project structure
 geo_attendance/
-├── app.py
-├── attendance.db          # auto-created at first run
-├── requirements.txt
+│── app.py
+│── attendance.db          # Auto-created database
+│── requirements.txt
+│
 ├── static/
 │   └── style.css
+│
 └── templates/
-    ├── index.html         # Employee page
-    ├── admin.html         # Admin dashboard
-    └── admin_login.html   # Admin login page
+    ├── index.html
+    ├── admin_login.html
+    └── admin.html
+
+
