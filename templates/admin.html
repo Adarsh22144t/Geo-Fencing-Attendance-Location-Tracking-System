@@ -5,6 +5,7 @@
     <title>Admin – Geo-Fencing Attendance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Leaflet CSS -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -19,17 +20,45 @@
 </head>
 <body class="bg-light">
 <div class="container py-4">
-    <h2 class="mb-3">📊 Admin Dashboard – Geo-Fencing Attendance</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">📊 Admin Dashboard – Geo-Fencing Attendance</h2>
+        <a href="/admin/logout" class="btn btn-outline-danger btn-sm">Logout</a>
+    </div>
 
+    <!-- Office Location Config -->
     <div class="card mb-4 p-3 shadow-sm">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Live Map</h5>
-            <a href="/download-logs" class="btn btn-sm btn-outline-secondary">Download Logs (CSV)</a>
-        </div>
-        <p class="text-muted mb-2">Blue circle = office geo-fence. Red markers = employee check-ins.</p>
+        <h5>Office / Campus Location Settings</h5>
+        <form method="POST" action="/update-location" class="row g-3 mt-2">
+            <div class="col-md-4">
+                <label class="form-label">Office Latitude</label>
+                <input type="number" step="0.000001" class="form-control" name="office_lat"
+                       value="{{ office_lat }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Office Longitude</label>
+                <input type="number" step="0.000001" class="form-control" name="office_lng"
+                       value="{{ office_lng }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Radius (meters)</label>
+                <input type="number" step="1" class="form-control" name="radius_m"
+                       value="{{ radius_m }}">
+            </div>
+            <div class="col-12 mt-2">
+                <button class="btn btn-primary">Update Location</button>
+                <a href="/download-logs" class="btn btn-outline-secondary ms-2">Download & Clear Logs (CSV)</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Map -->
+    <div class="card mb-4 p-3 shadow-sm">
+        <h5>Live Map</h5>
+        <p class="text-muted">Blue circle = office geofence. Markers = employee check-ins.</p>
         <div id="map"></div>
     </div>
 
+    <!-- Logs Table -->
     <div class="card p-3 shadow-sm">
         <h5>Recent Attendance Logs</h5>
         <div class="table-responsive mt-3">
@@ -68,6 +97,7 @@
     </div>
 </div>
 
+<!-- Leaflet JS -->
 <script
   src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -79,16 +109,18 @@
     const radiusM = {{ radius_m }};
     const records = {{ records | tojson }};
 
-    const map = L.map('map').setView([officeLat, officeLng], 17);
+    const map = L.map('map').setView([officeLat, officeLng], 16);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
     }).addTo(map);
 
+    // Office marker
     L.marker([officeLat, officeLng]).addTo(map)
         .bindPopup("Office Location")
         .openPopup();
 
+    // Geofence circle
     L.circle([officeLat, officeLng], {
         radius: radiusM,
         color: 'blue',
@@ -96,10 +128,12 @@
         fillOpacity: 0.2
     }).addTo(map);
 
+    // Employee check-in markers
     records.forEach(r => {
         L.marker([r.lat, r.lng], {title: r.emp_name}).addTo(map)
           .bindPopup(
-              `<b>${r.emp_name} (${r.emp_id})</b><br>Status: ${r.status}<br>Distance: ${r.distance_m.toFixed(1)} m<br>Time: ${r.created_at}`
+              `<b>${r.emp_name} (${r.emp_id})</b><br>Status: ${r.status}<br>` +
+              `Distance: ${r.distance_m.toFixed(1)} m<br>Time: ${r.created_at}`
           );
     });
 </script>
