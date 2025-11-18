@@ -20,8 +20,8 @@ app.secret_key = "change_this_secret_key"  # needed for sessions/login
 DB_PATH = "attendance.db"
 
 # Default office config (used only if DB has no values yet)
-DEFAULT_OFFICE_LAT = 18.573441
-DEFAULT_OFFICE_LNG = 83.361742
+DEFAULT_OFFICE_LAT = 18.465364
+DEFAULT_OFFICE_LNG = 83.661536
 DEFAULT_RADIUS_M = 200
 
 # Simple admin credentials (you can change these)
